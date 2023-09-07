@@ -12,6 +12,7 @@ func main() {
 	//val := []*ListNode{NewListNodeS(1, 4, 5), NewListNodeS(1, 3, 4), NewListNodeS(2, 6)}
 
 	v := reverseKGroup(l1, 3)
+	
 	fmt.Println(v)
 }
 
