@@ -37,44 +37,6 @@ package important
 //1 <= words.length <= 5000
 //1 <= words[i].length <= 30
 //words[i] 和 s 由小写英文字母组成
-func findSubstring(s string, words []string) []int {
-	var ret []int
-	sLen := len(s)
-	wLen := len(words)
-	if wLen == 0 {
-		return nil
-	}
-	wordLen := len(words[0])
-	strLen := wLen * wordLen
-	if sLen < strLen {
-		return nil
-	}
-	var srcWords = make(map[string]int, wLen)
-	for _, v := range words {
-		srcWords[v] = srcWords[v] + 1
-	}
-
-wrapper:
-	for i := 0; i <= sLen-strLen; i++ {
-		findWorlds := make(map[string]int)
-		for j := 0; j < wLen; j++ {
-			str := s[i+j*wordLen : i+j*wordLen+wordLen]
-
-			if _, exist := srcWords[str]; !exist {
-				continue wrapper
-			}
-
-			if findWorlds[str]+1 > srcWords[str] {
-				continue wrapper
-			}
-			findWorlds[str] = findWorlds[str] + 1
-		}
-
-		ret = append(ret, i)
-	}
-	return ret
-}
-
 // 滑动窗口解法，高效
 func findSubstringEfficient(s string, words []string) (ans []int) {
 	// 总长度ls
@@ -124,4 +86,43 @@ func findSubstringEfficient(s string, words []string) (ans []int) {
 		}
 	}
 	return
+}
+
+// 遍历，穷举，暴力解法
+func findSubstring(s string, words []string) []int {
+	var ret []int
+	sLen := len(s)
+	wLen := len(words)
+	if wLen == 0 {
+		return nil
+	}
+	wordLen := len(words[0])
+	strLen := wLen * wordLen
+	if sLen < strLen {
+		return nil
+	}
+	var srcWords = make(map[string]int, wLen)
+	for _, v := range words {
+		srcWords[v] = srcWords[v] + 1
+	}
+
+wrapper:
+	for i := 0; i <= sLen-strLen; i++ {
+		findWorlds := make(map[string]int)
+		for j := 0; j < wLen; j++ {
+			str := s[i+j*wordLen : i+j*wordLen+wordLen]
+
+			if _, exist := srcWords[str]; !exist {
+				continue wrapper
+			}
+
+			if findWorlds[str]+1 > srcWords[str] {
+				continue wrapper
+			}
+			findWorlds[str] = findWorlds[str] + 1
+		}
+
+		ret = append(ret, i)
+	}
+	return ret
 }

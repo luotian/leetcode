@@ -9,7 +9,7 @@ func main() {
 	//l1 := NewListNodeS(1, 2, 3, 4, 5)
 	//val := []*ListNode{NewListNodeS(1, 4, 5), NewListNodeS(1, 3, 4), NewListNodeS(2, 6)}
 	//val := []int{3, 2, 2, 3}
-	v := findSubstring("wordgoodgoodgoodbestwordddddddddddzzdafsdfadfafsd", []string{"word", "good", "best", "good"})
+	v := findSubstring("wordgoodgoodgoodbestword", []string{"word", "good", "best", "good"})
 	//v := reverseList(l1)
 	fmt.Println(v)
 }
@@ -51,6 +51,50 @@ func main() {
 //1 <= words.length <= 5000
 //1 <= words[i].length <= 30
 //words[i] 和 s 由小写英文字母组成
-func findSubstring(s string, words []string) (ans []int) {
+func findSubstring(s string, words []string) []int {
+	var ans []int
+	if len(words) == 0 {
+		return ans
+	}
 
+	ls := len(s)
+	lw := len(words)
+	lsw := len(words[0])
+
+	for i := 0; i < lsw && i+lw*lsw <= ls; i++ {
+		var diffWords = make(map[string]int)
+		for j := 0; j < lw; j++ {
+			diffWords[s[i+j*lsw:i+(j+1)*lsw]]++
+		}
+
+		for _, v := range words {
+			diffWords[v]--
+			if diffWords[v] == 0 {
+				delete(diffWords, v)
+			}
+		}
+
+		if len(diffWords) == 0 {
+			ans = append(ans, i)
+		}
+
+		// 每个单词做一个跨度
+		for start := i + lsw; start <= ls-lw*lsw; start += lsw {
+			// 减去最左边
+			diffWords[s[start-lsw:start]]--
+			if diffWords[s[start-lsw:start]] == 0 {
+				delete(diffWords, s[start-lsw:start])
+			}
+			// 增加最右边
+			diffWords[s[start+(lw-1)*lsw:start+lw*lsw]]++
+			if diffWords[s[start+(lw-1)*lsw:start+lw*lsw]] == 0 {
+				delete(diffWords, s[start+(lw-1)*lsw:start+lw*lsw])
+			}
+			if len(diffWords) == 0 {
+				ans = append(ans, start)
+			}
+		}
+	}
+
+	return ans
 }
