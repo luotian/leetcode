@@ -1,18 +1,4 @@
-package main
-
-import (
-	"fmt"
-)
-
-func main() {
-	//[[1,4,5],[1,3,4],[2,6]]
-	//l1 := NewListNodeS(1, 2, 3, 4, 5)
-	//val := []*ListNode{NewListNodeS(1, 4, 5), NewListNodeS(1, 3, 4), NewListNodeS(2, 6)}
-	//val := []int{3, 2, 2, 3}
-	v := findSubstring("wordgoodgoodgoodbestwordddddddddddzzdafsdfadfafsd", []string{"word", "good", "best", "good"})
-	//v := reverseList(l1)
-	fmt.Println(v)
-}
+package important
 
 //30. 串联所有单词的子串
 //给定一个字符串 s 和一个字符串数组 words。 words 中所有字符串 长度相同。
@@ -51,7 +37,46 @@ func main() {
 //1 <= words.length <= 5000
 //1 <= words[i].length <= 30
 //words[i] 和 s 由小写英文字母组成
-func findSubstring(s string, words []string) (ans []int) {
+func findSubstring(s string, words []string) []int {
+	var ret []int
+	sLen := len(s)
+	wLen := len(words)
+	if wLen == 0 {
+		return nil
+	}
+	wordLen := len(words[0])
+	strLen := wLen * wordLen
+	if sLen < strLen {
+		return nil
+	}
+	var srcWords = make(map[string]int, wLen)
+	for _, v := range words {
+		srcWords[v] = srcWords[v] + 1
+	}
+
+wrapper:
+	for i := 0; i <= sLen-strLen; i++ {
+		findWorlds := make(map[string]int)
+		for j := 0; j < wLen; j++ {
+			str := s[i+j*wordLen : i+j*wordLen+wordLen]
+
+			if _, exist := srcWords[str]; !exist {
+				continue wrapper
+			}
+
+			if findWorlds[str]+1 > srcWords[str] {
+				continue wrapper
+			}
+			findWorlds[str] = findWorlds[str] + 1
+		}
+
+		ret = append(ret, i)
+	}
+	return ret
+}
+
+// 滑动窗口解法，高效
+func findSubstringEfficient(s string, words []string) (ans []int) {
 	// 总长度ls
 	// m个单词
 	// 每个单词的长度为n
@@ -62,20 +87,15 @@ func findSubstring(s string, words []string) (ans []int) {
 	// 找到合适的划分区间
 	// 因为单词的长度为n, 所以n次为一轮
 	// 所有的单词都用上的最小长度为m*wordLen, 所以需要满足 i+wordsLen*wordLen <= strLen
-	var c1 int
-	var d1, d2, d3 int
 	for i := 0; i < wordLen && i+wordsLen*wordLen <= strLen; i++ {
-		c1++
 		differWords = make(map[string]int)
 		// 统计这一段初始字母中, 所有单词的计数
 		differ := differWords
 		for j := 0; j < wordsLen; j++ {
-			d1++
 			differ[s[i+j*wordLen:i+(j+1)*wordLen]]++
 		}
 		// 去掉目标单词对应的计数
 		for _, word := range words {
-			d2++
 			differ[word]--
 			if differ[word] == 0 {
 				delete(differ, word)
@@ -85,7 +105,6 @@ func findSubstring(s string, words []string) (ans []int) {
 			ans = append(ans, i)
 		}
 		for start := i + wordLen; start < strLen-wordsLen*wordLen+1; start += wordLen {
-			d3++
 			// 右端点加入一个单词
 			word := s[start+(wordsLen-1)*wordLen : start+wordsLen*wordLen]
 			differ[word]++
@@ -104,52 +123,5 @@ func findSubstring(s string, words []string) (ans []int) {
 			}
 		}
 	}
-
-	fmt.Println(c1 * (d1 + d2 + d3))
 	return
-}
-
-func findSubstringWaste(s string, words []string) []int {
-	var c1, c2 int
-	var d21, d22 int
-	var ret []int
-	sLen := len(s)
-	wLen := len(words)
-	if wLen == 0 {
-		return nil
-	}
-	wordLen := len(words[0])
-	strLen := wLen * wordLen
-	if sLen < strLen {
-		return nil
-	}
-	var srcWords = make(map[string]int, wLen)
-	for _, v := range words {
-		c1++
-		srcWords[v] = srcWords[v] + 1
-	}
-
-wrapper:
-	for i := 0; i <= sLen-strLen; i++ {
-		c2++
-		findWorlds := make(map[string]int)
-		for j := 0; j < wLen; j++ {
-			d21++
-			str := s[i+j*wordLen : i+j*wordLen+wordLen]
-
-			if _, exist := srcWords[str]; !exist {
-				continue wrapper
-			}
-
-			if findWorlds[str]+1 > srcWords[str] {
-				continue wrapper
-			}
-			findWorlds[str] = findWorlds[str] + 1
-		}
-
-		ret = append(ret, i)
-	}
-
-	fmt.Println(c1 + c2*(d21+d22))
-	return ret
 }
