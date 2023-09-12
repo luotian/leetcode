@@ -1,18 +1,4 @@
-package main
-
-import (
-	"fmt"
-)
-
-func main() {
-	//[[1,4,5],[1,3,4],[2,6]]
-	//l1 := NewListNodeS(1, 2, 3, 4, 5)
-	//val := []*ListNode{NewListNodeS(1, 4, 5), NewListNodeS(1, 3, 4), NewListNodeS(2, 6)}
-	val := []int{1, 2, 4, 3}
-	nextPermutation(val)
-	//v := reverseList(l1)
-	fmt.Println(val)
-}
+package important
 
 //31. 下一个排列
 //整数数组的一个 排列  就是将其所有成员以序列或线性顺序排列。
@@ -26,6 +12,8 @@ func main() {
 //给你一个整数数组 nums ，找出 nums 的下一个排列。
 //
 //必须 原地 修改，只允许使用额外常数空间。
+
+//题解：从右向左找最小的大数与左边的数进行交换，再把右边进行逆序
 func nextPermutation(nums []int) {
 	ln := len(nums)
 	if len(nums) == 1 {
