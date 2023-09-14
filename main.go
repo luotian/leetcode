@@ -35,4 +35,50 @@ func main() {
 
 //题解：使用栈的思想方法
 func search(nums []int, target int) int {
+	if len(nums) <= 2 {
+		for i, v := range nums {
+			if v == target {
+				return i
+			}
+		}
+
+		return -1
+	}
+
+	l := len(nums)
+	lIdx := 0
+	rIdx := l - 1
+	lVal := nums[lIdx]
+	rVal := nums[rIdx]
+
+	switch target {
+	case nums[lIdx]:
+		return lIdx
+	case nums[rIdx]:
+		return rIdx
+	}
+
+	var mid int
+	for lIdx <= rIdx {
+		mid = (lIdx + rIdx) / 2
+		if nums[mid] == target {
+			return mid
+		}
+
+		if lVal <= nums[mid] {
+			if lVal <= target && target <= nums[mid] {
+				rIdx = mid - 1
+			} else {
+				lIdx = mid + 1
+			}
+		} else {
+			if rVal >= target && target >= nums[mid] {
+				lIdx = mid + 1
+			} else {
+				rIdx = mid - 1
+			}
+		}
+	}
+
+	return -1
 }
