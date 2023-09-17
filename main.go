@@ -8,8 +8,20 @@ func main() {
 	//[[1,4,5],[1,3,4],[2,6]]
 	//l1 := NewListNodeS(1, 2, 3, 4, 5)
 	//val := []*ListNode{NewListNodeS(1, 4, 5), NewListNodeS(1, 3, 4), NewListNodeS(2, 6)}
-	val := []int{4, 5, 6, 7, 0, 1, 2}
-	v := search(val, 0)
+	//val := []int{1, 3, 5, 7, 9, 11, 13}
+
+	val := [][]string{
+		{".", ".", ".", ".", "5", ".", ".", "1", "."},
+		{".", "4", ".", "3", ".", ".", ".", ".", "."},
+		{".", ".", ".", ".", ".", "3", ".", ".", "1"},
+		{"8", ".", ".", ".", ".", ".", ".", "2", "."},
+		{".", ".", "2", ".", "7", ".", ".", ".", "."},
+		{".", "1", "5", ".", ".", ".", ".", ".", "."},
+		{".", ".", ".", ".", ".", "2", ".", ".", "."},
+		{".", "2", ".", "9", ".", ".", ".", ".", "."},
+		{".", ".", "4", ".", ".", ".", ".", ".", "."},
+	}
+	v := isValidSudoku(val)
 	//v := reverseList(l1)
 	fmt.Println(v)
 }
@@ -34,51 +46,29 @@ func main() {
 //s[i] 为 '(' 或 ')'
 
 //题解：使用栈的思想方法
-func search(nums []int, target int) int {
-	if len(nums) <= 2 {
-		for i, v := range nums {
-			if v == target {
-				return i
+func isValidSudoku(board [][]byte) bool {
+	var rows, cols [9][9]int
+	var box [3][3][9]int
+
+	for row := 0; row < 9; row++ {
+		for col := 0; col < 9; col++ {
+			if board[row][col] == '.' {
+				continue
 			}
-		}
 
-		return -1
-	}
-
-	l := len(nums)
-	lIdx := 0
-	rIdx := l - 1
-	lVal := nums[lIdx]
-	rVal := nums[rIdx]
-
-	switch target {
-	case nums[lIdx]:
-		return lIdx
-	case nums[rIdx]:
-		return rIdx
-	}
-
-	var mid int
-	for lIdx <= rIdx {
-		mid = (lIdx + rIdx) / 2
-		if nums[mid] == target {
-			return mid
-		}
-
-		if lVal <= nums[mid] {
-			if lVal <= target && target <= nums[mid] {
-				rIdx = mid - 1
-			} else {
-				lIdx = mid + 1
-			}
-		} else {
-			if rVal >= target && target >= nums[mid] {
-				lIdx = mid + 1
-			} else {
-				rIdx = mid - 1
+			val := board[row][col] - '1'
+			rows[row][val]++
+			cols[col][val]++
+			box[row/3][col/3][val]++
+			if rows[row][val] > 1 || cols[col][val] > 1 || box[row/3][col/3][val] > 1 {
+				return false
 			}
 		}
 	}
 
-	return -1
+	return true
+}
+
+func getKey(row int, col int) int {
+	return row/3*10 + col/3
 }
