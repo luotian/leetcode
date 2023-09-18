@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-)
-
 func main() {
 	//[[1,4,5],[1,3,4],[2,6]]
 	//l1 := NewListNodeS(1, 2, 3, 4, 5)
@@ -21,54 +17,28 @@ func main() {
 		{".", "2", ".", "9", ".", ".", ".", ".", "."},
 		{".", ".", "4", ".", ".", ".", ".", ".", "."},
 	}
-	v := isValidSudoku(val)
+	//v := solveSudoku(val)
 	//v := reverseList(l1)
-	fmt.Println(v)
+	//fmt.Println(v)
 }
 
-//32. 下一个排列
-//给你一个只包含 '(' 和 ')' 的字符串，找出最长有效（格式正确且连续）括号子串的长度。
+//37. 解数独
+//编写一个程序，通过填充空格来解决数独问题。
 //
-//示例 1：
-//输入：s = "(()"
-//输出：2
-//解释：最长有效括号子串是 "()"
-//示例 2：
-//输入：s = ")()())"
-//输出：4
-//解释：最长有效括号子串是 "()()"
-//示例 3：
-//输入：s = ""
-//输出：0
+//数独的解法需 遵循如下规则：
 //
+//数字 1-9 在每一行只能出现一次。
+//数字 1-9 在每一列只能出现一次。
+//数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。（请参考示例图）
+//数独部分空格内已填入了数字，空白格用 '.' 表示。
+
 //提示：
-//0 <= s.length <= 3 * 104
-//s[i] 为 '(' 或 ')'
+//
+//board.length == 9
+//board[i].length == 9
+//board[i][j] 是一位数字或者 '.'
+//题目数据 保证 输入数独仅有一个解
 
-//题解：使用栈的思想方法
-func isValidSudoku(board [][]byte) bool {
-	var rows, cols [9][9]int
-	var box [3][3][9]int
+func solveSudoku(board [][]byte) {
 
-	for row := 0; row < 9; row++ {
-		for col := 0; col < 9; col++ {
-			if board[row][col] == '.' {
-				continue
-			}
-
-			val := board[row][col] - '1'
-			rows[row][val]++
-			cols[col][val]++
-			box[row/3][col/3][val]++
-			if rows[row][val] > 1 || cols[col][val] > 1 || box[row/3][col/3][val] > 1 {
-				return false
-			}
-		}
-	}
-
-	return true
-}
-
-func getKey(row int, col int) int {
-	return row/3*10 + col/3
 }
