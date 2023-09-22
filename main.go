@@ -1,90 +1,60 @@
 package main
 
+import (
+	"fmt"
+	"sort"
+)
+
 func main() {
 	//[[1,4,5],[1,3,4],[2,6]]
 	//l1 := NewListNodeS(1, 2, 3, 4, 5)
 	//val := []*ListNode{NewListNodeS(1, 4, 5), NewListNodeS(1, 3, 4), NewListNodeS(2, 6)}
-	//val := []int{1, 3, 5, 7, 9, 11, 13}
+	val := []int{10, 1, 2, 7, 6, 1, 5}
 
-	val := [][]byte{
-		{'.', '.', '.', '.', '5', '.', '.', '1', '.'},
-		{'.', '4', '.', '3', '.', '.', '.', '.', '.'},
-		{'.', '.', '.', '.', '.', '3', '.', '.', '1'},
-		{'8', '.', '.', '.', '.', '.', '.', '2', '.'},
-		{'.', '.', '2', '.', '7', '.', '.', '.', '.'},
-		{'.', '1', '5', '.', '.', '.', '.', '.', '.'},
-		{'.', '.', '.', '.', '.', '2', '.', '.', '.'},
-		{'.', '2', '.', '9', '.', '.', '.', '.', '.'},
-		{'.', '.', '4', '.', '.', '.', '.', '.', '.'},
-	}
-	solveSudoku(val)
+	v := combinationSum2(val, 8)
 	//v := reverseList(l1)
-	//fmt.Println(v)
+	fmt.Println(v)
 }
 
-//37. 解数独
-//编写一个程序，通过填充空格来解决数独问题。
-//
-//数独的解法需 遵循如下规则：
-//
-//数字 1-9 在每一行只能出现一次。
-//数字 1-9 在每一列只能出现一次。
-//数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。（请参考示例图）
-//数独部分空格内已填入了数字，空白格用 '.' 表示。
+//39. 组合综合
+//给你一个 无重复元素 的整数数组 candidates 和一个目标整数 target ，找出 candidates 中可以使数字和为目标数 target 的 所有 不同组合
+//，并以列表形式返回。你可以按 任意顺序 返回这些组合。
+//candidates 中的 同一个 数字可以 无限制重复被选取 。如果至少一个数字的被选数量不同，则两种组合是不同的。
+//对于给定的输入，保证和为 target 的不同组合数少于 150 个。
 
 //提示：
 //
-//board.length == 9
-//board[i].length == 9
-//board[i][j] 是一位数字或者 '.'
-//题目数据 保证 输入数独仅有一个解
+//1 <= candidates.length <= 30
+//2 <= candidates[i] <= 40
+//candidates 的所有元素 互不相同
+//1 <= target <= 40
 
-func solveSudoku(board [][]byte) {
-	backtrack(board)
+var result [][]int
+
+func combinationSum2(candidates []int, target int) [][]int {
+	result = make([][]int, 0)
+	sort.Ints(candidates)
+	path := make([]int, 0)
+	backtracking(path, candidates, target)
+	return result
 }
 
-func backtrack(board [][]byte) bool {
-	for i := 0; i < len(board[0]); i++ {
-		for j := 0; j < len(board[0]); j++ {
-			if board[i][j] == '.' {
-				for val := '1'; val <= '9'; val++ {
-					if isValid(board, i, j, byte(val)) {
-						board[i][j] = byte(val)
-						if backtrack(board) {
-							return true
-						}
-						board[i][j] = '.'
-					}
-				}
-				return false
-			}
-		}
-	}
-	return true
-}
-
-func isValid(board [][]byte, row, col int, val byte) bool {
-	for r := 0; r < 9; r++ {
-		if board[r][col] == val {
-			return false
-		}
+func backtracking(path []int, candidates []int, target int) {
+	if target == 0 {
+		tmp := make([]int, len(path))
+		copy(tmp, path)
+		result = append(result, tmp)
+		return
 	}
 
-	for c := 0; c < 9; c++ {
-		if board[row][c] == val {
-			return false
+	for i := 0; i < len(candidates) && candidates[i] <= target; i++ {
+		if i > 0 && candidates[i] == candidates[i-1] {
+			continue
 		}
+		path = append(path, candidates[i])
+		target -= candidates[i]
+		backtracking(path, candidates[i+1:], target)
+		path = path[:len(path)-1]
+		target += candidates[i]
 	}
-
-	startRidx := row / 3 * 3
-	startCidx := col / 3 * 3
-	for r := startRidx; r < startRidx+3; r++ {
-		for c := startCidx; c < startCidx+3; c++ {
-			if board[r][c] == val {
-				return false
-			}
-		}
-	}
-
-	return true
 }
